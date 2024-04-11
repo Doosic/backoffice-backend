@@ -1,12 +1,10 @@
 package com.sideproject.domain.entity;
 
 import com.sideproject.common.BaseTimeEntity;
+import com.sideproject.domain.dto.admin.AdminResponseDto;
 import com.sideproject.domain.enums.AdminStatusCode;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +16,7 @@ import java.util.Collection;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "bk_admin")
 public class AdminEntity extends BaseTimeEntity implements UserDetails {
@@ -49,6 +48,15 @@ public class AdminEntity extends BaseTimeEntity implements UserDetails {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private AdminStatusCode status = AdminStatusCode.USE;
+
+  public AdminResponseDto toDto() {
+    AdminResponseDto dto = new AdminResponseDto();
+    dto.setAdminId(this.getAdminId());
+    dto.setEmail(this.getEmail());
+    dto.setName(this.getName());
+    dto.setStatus(this.getStatus());
+    return dto;
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

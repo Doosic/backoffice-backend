@@ -8,7 +8,13 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 public interface AdminRepository extends CrudRepository<AdminEntity, Long> {
+
+  AdminEntity findByEmail(String email);
+
+  Optional<AdminEntity> findByAdminIdAndStatus(Long adminId, AdminStatusCode statusCode);
 
   @Modifying
   @Transactional
