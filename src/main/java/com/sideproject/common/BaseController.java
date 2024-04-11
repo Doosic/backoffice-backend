@@ -2,7 +2,7 @@ package com.sideproject.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sideproject.domain.dto.user.UserInfo;
+import com.sideproject.domain.dto.admin.AdminInfo;
 import com.sideproject.exception.AccountException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,15 +15,15 @@ import static com.sideproject.domain.enums.ErrorCode.UNAUTHORIZED_FAIL;
 
 public class BaseController {
 
-  protected UserInfo getSessionInfo() throws AccountException {
+  protected AdminInfo getSessionInfo() throws AccountException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     if(authentication.getPrincipal().equals("anonymousUser")){
       throw new AccountException(UNAUTHORIZED_FAIL);
     }
 
-    UserInfo userInfo = (UserInfo) authentication.getDetails();
-    return userInfo;
+    AdminInfo adminInfo = (AdminInfo) authentication.getDetails();
+    return adminInfo;
   }
 
   protected byte[] compressData(String data) {
