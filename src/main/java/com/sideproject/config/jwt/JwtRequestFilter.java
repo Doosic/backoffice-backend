@@ -78,6 +78,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         Map<String, Object> claims = new HashMap<>();
         claims.put("adminId",admin.getAdminId());
         claims.put("email",admin.getEmail());
+        claims.put("name",admin.getName());
+        claims.put("status",admin.getStatus());
 
         Token jwtToken = jwtTokenProvider.generateTokenHS512(
             userEmail,

@@ -1,17 +1,17 @@
 package com.sideproject.domain.dto.admin;
 
+import com.sideproject.domain.dto.pagenation.Pagenation;
+import com.sideproject.domain.enums.AdminStatusCode;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class AdminRequestDto {
+public class AdminRequestDto extends Pagenation {
 
-  @NotNull(message = "AdminId cannot be null")
   private Long adminId;
-
-  @NotNull(message = "Email cannot be null")
-  @Size(min = 2, message = "Email not be less than two characters")
   private String email;
+  private String name;
+  private AdminStatusCode status;
 
 }

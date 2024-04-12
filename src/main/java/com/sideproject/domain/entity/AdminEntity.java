@@ -16,7 +16,6 @@ import java.util.Collection;
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "bk_admin")
 public class AdminEntity extends BaseTimeEntity implements UserDetails {
@@ -49,12 +48,15 @@ public class AdminEntity extends BaseTimeEntity implements UserDetails {
   @Enumerated(EnumType.STRING)
   private AdminStatusCode status = AdminStatusCode.USE;
 
+  public AdminEntity() {}
+
   public AdminResponseDto toDto() {
     AdminResponseDto dto = new AdminResponseDto();
     dto.setAdminId(this.getAdminId());
     dto.setEmail(this.getEmail());
     dto.setName(this.getName());
     dto.setStatus(this.getStatus());
+    dto.setCreateDate(String.valueOf(this.getCreateDate()));
     return dto;
   }
 
@@ -65,7 +67,7 @@ public class AdminEntity extends BaseTimeEntity implements UserDetails {
 
   @Override
   public String getPassword() {
-    return null;
+    return this.password;
   }
 
   @Override

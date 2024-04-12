@@ -10,4 +10,5 @@ public class AdminResponseDto {
   private String email;
   private String name;
   private AdminStatusCode status;
+  private String createDate;
 }

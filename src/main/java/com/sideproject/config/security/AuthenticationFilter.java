@@ -84,6 +84,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter i
     Map<String, Object> claims = new HashMap<>();
     claims.put("adminId",admin.getAdminId());
     claims.put("email",admin.getEmail());
+    claims.put("name",admin.getName());
+    claims.put("status",admin.getStatus());
 
     Token jwtToken = jwtTokenProvider.generateTokenHS512(
         admin.getEmail(),
@@ -106,6 +108,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter i
     LoginResponseDto loginResponseDto = LoginResponseDto.builder()
         .adminId(admin.getAdminId())
         .email(admin.getEmail())
+        .name(admin.getName())
+        .status(admin.getStatus())
         .build();
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);

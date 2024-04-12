@@ -2,6 +2,7 @@ package com.sideproject.config.jwt;
 
 import com.sideproject.common.CProperties;
 import com.sideproject.domain.dto.admin.AdminInfo;
+import com.sideproject.domain.enums.AdminStatusCode;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -154,6 +155,8 @@ public class JwtTokenProvider {
     return new AdminInfo().builder()
         .adminId(Long.parseLong(claims.get("adminId").toString()))
         .email((String) claims.get("email"))
+        .name((String) claims.get("name"))
+        .status(AdminStatusCode.valueOf((String) claims.get("status")))
         .build();
   }
 }
