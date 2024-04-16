@@ -1,6 +1,7 @@
 package com.sideproject.domain.entity;
 
 import com.sideproject.common.BaseTimeEntity;
+import com.sideproject.common.Utils;
 import com.sideproject.domain.dto.admin.AdminResponseDto;
 import com.sideproject.domain.enums.AdminStatusCode;
 import jakarta.persistence.*;
@@ -56,7 +57,7 @@ public class AdminEntity extends BaseTimeEntity implements UserDetails {
     dto.setEmail(this.getEmail());
     dto.setName(this.getName());
     dto.setStatus(this.getStatus());
-    dto.setCreateDate(String.valueOf(this.getCreateDate()));
+    dto.setCreateDate(Utils.getDateFormatString(this.getCreateDate()));
     return dto;
   }
 
@@ -72,7 +73,7 @@ public class AdminEntity extends BaseTimeEntity implements UserDetails {
 
   @Override
   public String getUsername() {
-    return null;
+    return this.email;
   }
 
   @Override
