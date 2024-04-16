@@ -10,8 +10,8 @@ import lombok.Data;
 public class AdminRequestDto extends Pagenation {
 
   private Long adminId;
-  private String email;
-  private String name;
+  private String searchTitle;
+  private String searchText;
   private AdminStatusCode status;
 
 }

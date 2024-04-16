@@ -110,14 +110,12 @@ public class AdminServiceImpl implements AdminService{
         .offset(pageRequest.getOffset())
         .limit(pageRequest.getPageSize());
 
-    if (adminRequestDto.getEmail() != null) {
-      jpaQuery.where(adminEntity.email.contains(adminRequestDto.getEmail()));
-    }
-    if (adminRequestDto.getName() != null) {
-      jpaQuery.where(adminEntity.name.contains(adminRequestDto.getName()));
-    }
-    if (adminRequestDto.getStatus() != null) {
-      jpaQuery.where(adminEntity.status.eq(adminRequestDto.getStatus()));
+    if(adminRequestDto.getSearchTitle() != null){
+      switch (adminRequestDto.getSearchTitle()){
+        case "email" -> jpaQuery.where(adminEntity.email.contains(adminRequestDto.getSearchText()));
+        case "name" -> jpaQuery.where(adminEntity.name.contains(adminRequestDto.getSearchText()));
+        case "status" -> jpaQuery.where(adminEntity.status.eq(AdminStatusCode.valueOf(adminRequestDto.getSearchText())));
+      }
     }
 
     List<AdminResponseDto> admins = jpaQuery.fetch();
@@ -126,14 +124,12 @@ public class AdminServiceImpl implements AdminService{
         .select(adminEntity.count())
         .from(adminEntity);
 
-    if (adminRequestDto.getEmail() != null) {
-      countQuery.where(adminEntity.email.contains(adminRequestDto.getEmail()));
-    }
-    if (adminRequestDto.getName() != null) {
-      countQuery.where(adminEntity.name.contains(adminRequestDto.getName()));
-    }
-    if (adminRequestDto.getStatus() != null) {
-      countQuery.where(adminEntity.status.eq(adminRequestDto.getStatus()));
+    if(adminRequestDto.getSearchTitle() != null){
+      switch (adminRequestDto.getSearchTitle()){
+        case "email" -> countQuery.where(adminEntity.email.contains(adminRequestDto.getSearchText()));
+        case "name" -> countQuery.where(adminEntity.name.contains(adminRequestDto.getSearchText()));
+        case "status" -> countQuery.where(adminEntity.status.eq(AdminStatusCode.valueOf(adminRequestDto.getSearchText())));
+      }
     }
 
     return PageableExecutionUtils.getPage(admins, pageRequest, countQuery::fetchCount);

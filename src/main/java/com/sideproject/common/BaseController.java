@@ -13,7 +13,7 @@ import java.util.zip.GZIPOutputStream;
 
 import static com.sideproject.domain.enums.ErrorCode.UNAUTHORIZED_FAIL;
 
-public class BaseController {
+public abstract class BaseController {
 
   protected AdminInfo getSessionInfo() throws AccountException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
