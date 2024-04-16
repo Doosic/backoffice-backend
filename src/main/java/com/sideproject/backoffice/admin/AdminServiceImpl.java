@@ -110,27 +110,28 @@ public class AdminServiceImpl implements AdminService{
         .offset(pageRequest.getOffset())
         .limit(pageRequest.getPageSize());
 
-    if(adminRequestDto.getSearchTitle() != null){
-      switch (adminRequestDto.getSearchTitle()){
-        case "email" -> jpaQuery.where(adminEntity.email.contains(adminRequestDto.getSearchText()));
-        case "name" -> jpaQuery.where(adminEntity.name.contains(adminRequestDto.getSearchText()));
-        case "status" -> jpaQuery.where(adminEntity.status.eq(AdminStatusCode.valueOf(adminRequestDto.getSearchText())));
-      }
-    }
-
-    List<AdminResponseDto> admins = jpaQuery.fetch();
-
     JPAQuery<Long> countQuery = queryFactory
         .select(adminEntity.count())
         .from(adminEntity);
 
     if(adminRequestDto.getSearchTitle() != null){
       switch (adminRequestDto.getSearchTitle()){
-        case "email" -> countQuery.where(adminEntity.email.contains(adminRequestDto.getSearchText()));
-        case "name" -> countQuery.where(adminEntity.name.contains(adminRequestDto.getSearchText()));
-        case "status" -> countQuery.where(adminEntity.status.eq(AdminStatusCode.valueOf(adminRequestDto.getSearchText())));
+        case "email" -> {
+          jpaQuery.where(adminEntity.email.contains(adminRequestDto.getSearchText()));
+          countQuery.where(adminEntity.email.contains(adminRequestDto.getSearchText()));
+        }
+        case "name" -> {
+          jpaQuery.where(adminEntity.name.contains(adminRequestDto.getSearchText()));
+          countQuery.where(adminEntity.name.contains(adminRequestDto.getSearchText()));
+        }
+        case "status" -> {
+          jpaQuery.where(adminEntity.status.eq(AdminStatusCode.valueOf(adminRequestDto.getSearchText())));
+          countQuery.where(adminEntity.status.eq(AdminStatusCode.valueOf(adminRequestDto.getSearchText())));
+        }
       }
     }
+
+    List<AdminResponseDto> admins = jpaQuery.fetch();
 
     return PageableExecutionUtils.getPage(admins, pageRequest, countQuery::fetchCount);
   }
