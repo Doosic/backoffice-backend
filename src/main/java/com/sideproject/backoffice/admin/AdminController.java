@@ -4,6 +4,7 @@ import com.sideproject.common.APIDataResponse;
 import com.sideproject.common.APIResponseList;
 import com.sideproject.common.BaseController;
 import com.sideproject.domain.dto.admin.AdminCreateRequestDto;
+import com.sideproject.domain.dto.admin.AdminInfo;
 import com.sideproject.domain.dto.admin.AdminRequestDto;
 import com.sideproject.domain.dto.admin.AdminResponseDto;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,14 +25,14 @@ public class AdminController extends BaseController {
   private final AdminService adminService;
 
   @GetMapping("/bs/admin/session-info")
-  public APIDataResponse<AdminResponseDto> getAdminSessionInfo() {
-    AdminResponseDto adminResponseDto = new AdminResponseDto();
-    adminResponseDto.setAdminId(this.getSessionInfo().getAdminId());
-    adminResponseDto.setName(this.getSessionInfo().getName());
-    adminResponseDto.setEmail(this.getSessionInfo().getEmail());
-    adminResponseDto.setStatus(this.getSessionInfo().getStatus());
+  public APIDataResponse<AdminInfo> getAdminSessionInfo() {
+    AdminInfo adminInfo = new AdminInfo();
+    adminInfo.setAdminId(this.getSessionInfo().getAdminId());
+    adminInfo.setName(this.getSessionInfo().getName());
+    adminInfo.setEmail(this.getSessionInfo().getEmail());
+    adminInfo.setStatus(this.getSessionInfo().getStatus());
 
-    return APIDataResponse.of(adminResponseDto);
+    return APIDataResponse.of(adminInfo);
   }
 
   @PostMapping("/bp/admin")
