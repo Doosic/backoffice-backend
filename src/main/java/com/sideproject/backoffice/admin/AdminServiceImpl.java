@@ -10,6 +10,7 @@ import com.sideproject.config.jwt.JwtTokenProvider;
 import com.sideproject.domain.dto.admin.AdminCreateRequestDto;
 import com.sideproject.domain.dto.admin.AdminRequestDto;
 import com.sideproject.domain.dto.admin.AdminResponseDto;
+import com.sideproject.domain.dto.admin.AdminUpdateRequestDto;
 import com.sideproject.domain.entity.AdminEntity;
 import com.sideproject.domain.entity.QAdminEntity;
 import com.sideproject.domain.enums.AdminStatusCode;
@@ -28,6 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,10 +85,6 @@ public class AdminServiceImpl implements AdminService{
     AdminEntity adminEntity = Optional.ofNullable(adminRepository.findByAdminIdAndStatus(adminRequestDto.getAdminId(), AdminStatusCode.USE))
         .orElseThrow(() -> new AccountException(USER_NOT_EXIST)).get();
 
-    if (adminEntity == null){
-      throw new AccountException(USER_NOT_EXIST);
-    }
-
     return adminEntity.toDto();
   }
 
@@ -108,11 +106,13 @@ public class AdminServiceImpl implements AdminService{
         )).from(adminEntity)
         .orderBy(adminEntity.adminId.desc())
         .offset(pageRequest.getOffset())
-        .limit(pageRequest.getPageSize());
+        .limit(pageRequest.getPageSize())
+        .where(adminEntity.status.ne(AdminStatusCode.DELETE));
 
     JPAQuery<Long> countQuery = queryFactory
         .select(adminEntity.count())
-        .from(adminEntity);
+        .from(adminEntity)
+        .where(adminEntity.status.ne(AdminStatusCode.DELETE));
 
     if(adminRequestDto.getSearchTitle() != null){
       switch (adminRequestDto.getSearchTitle()){
@@ -149,6 +149,38 @@ public class AdminServiceImpl implements AdminService{
 
     adminRepository.save(adminEntity);
 
+    AdminResponseDto adminResponseDto = adminEntity.toDto();
+    return adminResponseDto;
+  }
+
+  @Transactional
+  @Override
+  public AdminResponseDto updateAdmin(AdminUpdateRequestDto adminUpdateRequestDto) {
+    AdminEntity adminEntity = Optional.ofNullable(adminRepository.findByAdminIdAndStatus(adminUpdateRequestDto.getAdminId(), AdminStatusCode.USE))
+        .orElseThrow(() -> new AccountException(USER_NOT_EXIST)).get();
+
+    AdminResponseDto adminResponseDto = adminUpdateRequestDto.toEntity(adminEntity).toDto();
+    return adminResponseDto;
+  }
+
+  @Transactional
+  @Override
+  public AdminResponseDto deleteAdmin(AdminRequestDto adminRequestDto) {
+    AdminEntity adminEntity = Optional.ofNullable(adminRepository.findByAdminIdAndStatus(adminRequestDto.getAdminId(), AdminStatusCode.USE))
+        .orElseThrow(() -> new AccountException(USER_NOT_EXIST)).get();
+
+    adminEntity.setStatus(AdminStatusCode.DELETE);
+    AdminResponseDto adminResponseDto = adminEntity.toDto();
+    return adminResponseDto;
+  }
+
+  @Transactional
+  @Override
+  public AdminResponseDto unlockAdmin(AdminRequestDto adminRequestDto) {
+    AdminEntity adminEntity = Optional.ofNullable(adminRepository.findByAdminIdAndStatus(adminRequestDto.getAdminId(), AdminStatusCode.LOCK))
+        .orElseThrow(() -> new AccountException(USER_NOT_EXIST)).get();
+
+    adminEntity.setStatus(AdminStatusCode.USE);
     AdminResponseDto adminResponseDto = adminEntity.toDto();
     return adminResponseDto;
   }
