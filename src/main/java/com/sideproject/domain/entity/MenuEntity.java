@@ -1,8 +1,9 @@
 package com.sideproject.domain.entity;
 
 import com.sideproject.common.BaseTimeEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.sideproject.domain.dto.menu.MenuResponseDto;
+import com.sideproject.domain.enums.MenuTypeCode;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,45 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "bk_menu")
-public class MenuEntity extends BaseTimeEntity {
+public class MenuEntity{
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "menu_id")
+  private Long menuId;
+
+  @Column(name = "menu_parent")
+  private Long menuParent;
+
+  @Column(name = "menu_name")
+  private String menuName;
+
+  @Column(name = "menu_level")
+  private Integer menuLevel;
+
+  @Column(name = "menu_order")
+  private Integer menuOrder;
+
+  @Column(name = "menu_type")
+  @Enumerated(EnumType.STRING)
+  private MenuTypeCode menuTypeCode;
+
+  @Column(name = "menu_icon")
+  private String menuIcon;
+
+  @Column(name = "menu_link")
+  private String menuLink;
+
+  public MenuEntity () {};
+
+  public MenuResponseDto toDto(){
+    MenuResponseDto menu = new MenuResponseDto();
+    menu.setMenuId(this.getMenuId());
+    menu.setMenuParent(this.getMenuParent());
+    menu.setLabel(this.getMenuName());
+    menu.setIcon(this.getMenuIcon());
+    menu.setTo(this.getMenuLink());
+    return menu;
+  }
 
 }
