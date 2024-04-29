@@ -21,17 +21,26 @@ CREATE TABLE IF NOT EXISTS bk_admin ( <br/>
 CREATE TABLE IF NOT EXISTS bk_menu ( <br/>
 &nbsp&nbsp menu_id BIGSERIAL PRIMARY key, <br/>
 &nbsp&nbsp menu_parent BIGSERIAL NOT NULL, <br/>
-&nbsp&nbsp menu_name varchar(60) NOT NULL, <br/>
-&nbsp&nbsp menu_level int4 NOT NULL, <br/>
-&nbsp&nbsp menu_order int4 NOT NULL, <br/>
-&nbsp&nbsp menu_type varchar(30) NOT NULL, <br/>
-&nbsp&nbsp menu_icon varchar(60) NOT NULL, <br/>
-&nbsp&nbsp menu_link varchar(60) NOT NULL, <br/>
+&nbsp&nbsp menu_name varchar(60), <br/>
+&nbsp&nbsp menu_level int4, <br/>
+&nbsp&nbsp menu_order int4, <br/>
+&nbsp&nbsp menu_type varchar(30), <br/>
+&nbsp&nbsp menu_icon varchar(60), <br/>
+&nbsp&nbsp menu_link varchar(60), <br/>
 );
 </p>
 
 <p>
-insert into bk_menu (menu_id, menu_parent, menu_name, menu_level, menu_order, menu_type, menu_icon, menu_link) 
-values (default, -1, 'HOME', 1, 1, 'ITEM', 'pi pi-user-plus', '/');
+insert into bk_menu (menu_id, menu_parent, menu_name, menu_level, menu_order, menu_type, menu_icon, menu_link)
+values (default, -1, 'HOME', 1, 1, 'ITEM', 'pi pi-user-plus', '/'); <br/>
+insert into bk_menu (menu_id, menu_parent, menu_name, menu_level, menu_order, menu_type, menu_icon, menu_link)
+values (default, 1, 'Dashboard', 2, 2, 'TREE', 'pi pi-user-plus', '/');<br/>
+
+insert into bk_menu (menu_id, menu_parent, menu_name, menu_level, menu_order, menu_type, menu_icon, menu_link)
+values (default, -1, 'ADMIN', 1, 1, 'ITEM', 'pi pi-user-plus', '/admin/list');<br/>
+insert into bk_menu (menu_id, menu_parent, menu_name, menu_level, menu_order, menu_type, menu_icon, menu_link)
+values (default, 2, 'AdminList', 2, 2, 'TREE', 'pi pi-user-plus', '/');<br/>
+insert into bk_menu (menu_id, menu_parent, menu_name, menu_level, menu_order, menu_type, menu_icon, menu_link)
+values (default, 2, 'AuthList', 2, 3, 'TREE', 'pi pi-user-plus', '/');<br/>
 </p>
 
