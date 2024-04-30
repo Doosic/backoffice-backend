@@ -26,6 +26,9 @@ public class AdminEntity extends BaseTimeEntity implements UserDetails {
   @Column(name = "admin_id")
   private Long adminId;
 
+  @Column(name = "auth_id")
+  private Long authId;
+
   @Column(nullable = false, length = 50)
   private String email;
 
@@ -57,6 +60,7 @@ public class AdminEntity extends BaseTimeEntity implements UserDetails {
     dto.setEmail(this.getEmail());
     dto.setName(this.getName());
     dto.setStatus(this.getStatus());
+    dto.setAuthId(this.getAuthId());
     dto.setCreateDate(Utils.getDateFormatString(this.getCreateDate()));
     return dto;
   }

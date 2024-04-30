@@ -157,6 +157,7 @@ public class JwtTokenProvider {
         .email((String) claims.get("email"))
         .name((String) claims.get("name"))
         .status(AdminStatusCode.valueOf((String) claims.get("status")))
+        .authId(Long.parseLong(claims.get("authId").toString()))
         .build();
   }
 }

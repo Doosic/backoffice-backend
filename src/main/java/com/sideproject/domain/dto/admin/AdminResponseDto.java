@@ -7,6 +7,7 @@ import lombok.Data;
 public class AdminResponseDto {
 
   private Long adminId;
+  private Long authId;
   private String email;
   private String name;
   private AdminStatusCode status;

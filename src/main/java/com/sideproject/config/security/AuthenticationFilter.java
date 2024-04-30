@@ -10,6 +10,8 @@ import com.sideproject.config.jwt.Token;
 import com.sideproject.domain.dto.admin.AdminResponseDto;
 import com.sideproject.domain.dto.login.LoginRequestDto;
 import com.sideproject.domain.dto.login.LoginResponseDto;
+import com.sideproject.domain.entity.AuthEntity;
+import com.sideproject.domain.repository.AuthRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -86,6 +88,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter i
     claims.put("email",admin.getEmail());
     claims.put("name",admin.getName());
     claims.put("status",admin.getStatus());
+    claims.put("authId",admin.getAuthId());
 
     Token jwtToken = jwtTokenProvider.generateTokenHS512(
         admin.getEmail(),
@@ -110,6 +113,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter i
         .email(admin.getEmail())
         .name(admin.getName())
         .status(admin.getStatus())
+        .authId(admin.getAuthId())
         .build();
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);

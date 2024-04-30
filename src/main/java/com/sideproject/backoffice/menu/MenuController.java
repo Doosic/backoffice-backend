@@ -18,9 +18,22 @@ public class MenuController extends BaseController {
 
   private final MenuService menuService;
 
+  @GetMapping("/bs/all-menu")
+  public ResponseEntity<byte[]> getAllMenu() {
+    List<MenuResponseDto> menuResponseDtos = menuService.getMenus();
+
+    String jsonData = this.convertObjectToJson(APIDataResponse.of(menuResponseDtos));
+    byte[] compressedData = this.compressData(jsonData);
+
+    return ResponseEntity.ok()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header("Content-Encoding", "gzip")
+        .body(compressedData);
+  }
+
   @GetMapping("/bs/menus")
   public ResponseEntity<byte[]> getMenus() {
-    List<MenuResponseDto> menuResponseDtos = menuService.getMenus();
+    List<MenuResponseDto> menuResponseDtos = menuService.getAuthMenus(this.getSessionInfo().getAuthId());
 
     String jsonData = this.convertObjectToJson(APIDataResponse.of(menuResponseDtos));
     byte[] compressedData = this.compressData(jsonData);

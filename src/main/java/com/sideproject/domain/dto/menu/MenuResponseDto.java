@@ -10,11 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MenuResponseDto {
-
   private Long menuId;
   private Long menuParent;
   private String label;
   private String icon;
   private String to;
+  private String query;
   private List<MenuResponseDto> items;
 }

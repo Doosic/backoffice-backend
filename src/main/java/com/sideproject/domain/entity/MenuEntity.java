@@ -1,5 +1,6 @@
 package com.sideproject.domain.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.sideproject.common.BaseTimeEntity;
 import com.sideproject.domain.dto.menu.MenuResponseDto;
 import com.sideproject.domain.enums.MenuTypeCode;
@@ -44,6 +45,9 @@ public class MenuEntity{
   @Column(name = "menu_link")
   private String menuLink;
 
+  @Column(name = "menu_query")
+  private String menuQuery;
+
   public MenuEntity () {};
 
   public MenuResponseDto toDto(){
@@ -53,6 +57,7 @@ public class MenuEntity{
     menu.setLabel(this.getMenuName());
     menu.setIcon(this.getMenuIcon());
     menu.setTo(this.getMenuLink());
+    menu.setQuery(this.getMenuQuery());
     return menu;
   }
 
