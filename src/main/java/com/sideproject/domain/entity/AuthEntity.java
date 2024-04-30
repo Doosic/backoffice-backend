@@ -1,5 +1,6 @@
 package com.sideproject.domain.entity;
 
+import com.sideproject.common.BaseTimeEntity;
 import com.sideproject.domain.enums.AuthType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "bk_auth")
-public class AuthEntity {
+public class AuthEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +23,9 @@ public class AuthEntity {
 
   @Column(name = "admin_id")
   private Long adminId;
+
+  @Column(name = "reg_user")
+  private Long regUser;
 
   @Column(name = "auth_name")
   private String authName;

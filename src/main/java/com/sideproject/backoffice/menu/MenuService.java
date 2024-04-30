@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sideproject.domain.dto.menu.MenuResponseDto;
+import com.sideproject.domain.dto.menu.MenuSimpleResponseDto;
 import com.sideproject.domain.entity.MenuEntity;
 import com.sideproject.domain.entity.QAuthMenuEntity;
 import com.sideproject.domain.entity.QMenuEntity;
@@ -38,8 +39,8 @@ public class MenuService {
     List<MenuResponseDto> roots = new ArrayList<>();
 
     for (MenuResponseDto menu : allMenus){
-      menu.setItems(new ArrayList<>());
-      menuMap.put(menu.getMenuId(), menu);
+      menu.setChildren(new ArrayList<>());
+      menuMap.put(menu.getKey(), menu);
     }
 
     for (MenuResponseDto menu : allMenus){
@@ -47,7 +48,7 @@ public class MenuService {
       if (parentId != -1){
         MenuResponseDto parentMenu = menuMap.get(parentId);
         if (parentMenu != null){
-          parentMenu.getItems().add(menu);
+          parentMenu.getChildren().add(menu);
         }
       } else {
         roots.add(menu);
@@ -63,7 +64,7 @@ public class MenuService {
     QMenuEntity menuEntity = QMenuEntity.menuEntity;
 
     JPAQuery<MenuResponseDto> jpaQuery = queryFactory.select(Projections.fields(MenuResponseDto.class,
-        menuEntity.menuId,
+        menuEntity.menuId.as("key"),
         menuEntity.menuParent,
         menuEntity.menuName.as("label"),
         menuEntity.menuIcon.as("icon"),
@@ -80,8 +81,8 @@ public class MenuService {
     List<MenuResponseDto> roots = new ArrayList<>();
 
     for (MenuResponseDto menu : allMenus){
-      menu.setItems(new ArrayList<>());
-      menuMap.put(menu.getMenuId(), menu);
+      menu.setChildren(new ArrayList<>());
+      menuMap.put(menu.getKey(), menu);
     }
 
     for (MenuResponseDto menu : allMenus){
@@ -89,7 +90,7 @@ public class MenuService {
       if (parentId != -1){
         MenuResponseDto parentMenu = menuMap.get(parentId);
         if (parentMenu != null){
-          parentMenu.getItems().add(menu);
+          parentMenu.getChildren().add(menu);
         }
       } else {
         roots.add(menu);
@@ -97,5 +98,22 @@ public class MenuService {
     }
 
     return roots;
+  }
+
+  public List<MenuSimpleResponseDto> getMenuKeys(Long authId) {
+    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+    QAuthMenuEntity authMenuEntity = QAuthMenuEntity.authMenuEntity;
+    QMenuEntity menuEntity = QMenuEntity.menuEntity;
+
+    JPAQuery<MenuSimpleResponseDto> jpaQuery = queryFactory.select(Projections.fields(MenuSimpleResponseDto.class,
+            menuEntity.menuId.as("key")
+        )).from(authMenuEntity)
+        .leftJoin(menuEntity)
+        .on(authMenuEntity.menuId.eq(menuEntity.menuId))
+        .where(authMenuEntity.authId.eq(authId));
+
+    List<MenuSimpleResponseDto> allMenus = jpaQuery.fetch();
+
+    return allMenus;
   }
 }

@@ -52,7 +52,7 @@ public class MenuEntity{
 
   public MenuResponseDto toDto(){
     MenuResponseDto menu = new MenuResponseDto();
-    menu.setMenuId(this.getMenuId());
+    menu.setKey(this.getMenuId());
     menu.setMenuParent(this.getMenuParent());
     menu.setLabel(this.getMenuName());
     menu.setIcon(this.getMenuIcon());

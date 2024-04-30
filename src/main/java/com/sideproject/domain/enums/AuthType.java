@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AuthType {
 
-  ITEM("MENU"),
-  TREE("FUNC");
+  MENU("MENU"),
+  FUNC("FUNC");
 
   private final String status;
 }
