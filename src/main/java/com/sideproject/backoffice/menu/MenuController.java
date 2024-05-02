@@ -2,7 +2,6 @@ package com.sideproject.backoffice.menu;
 
 import com.sideproject.common.APIDataResponse;
 import com.sideproject.common.BaseController;
-import com.sideproject.domain.dto.admin.AdminInfo;
 import com.sideproject.domain.dto.menu.MenuRequestDto;
 import com.sideproject.domain.dto.menu.MenuResponseDto;
 import com.sideproject.domain.dto.menu.MenuSimpleResponseDto;
@@ -60,4 +59,5 @@ public class MenuController extends BaseController {
         .header("Content-Encoding", "gzip")
         .body(compressedData);
   }
+
 }

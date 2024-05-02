@@ -30,8 +30,8 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(AccountException.class)
   public ResponseEntity<Object> handleGlobalExceptionAccount(Exception e, WebRequest request){
-    if(e.getMessage().equals(DUPLICATED_USER.getMessage())){
-      return handleExceptionInternal(e, DUPLICATED_USER, request);
+    if(e.getMessage().equals(DUPLICATED_DATA.getMessage())){
+      return handleExceptionInternal(e, DUPLICATED_DATA, request);
 
     } else if(e.getMessage().equals(LOCKED_ACCOUNT.getMessage())){
       return handleExceptionInternal(e, LOCKED_ACCOUNT, request);

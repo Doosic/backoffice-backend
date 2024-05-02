@@ -209,7 +209,7 @@ public class AdminServiceImpl implements AdminService{
     AdminEntity userEntity = adminRepository.findByEmail(userEmail);
 
     if(userEntity != null){
-      throw new AccountException(DUPLICATED_USER);
+      throw new AccountException(DUPLICATED_DATA);
     }
   }
 }

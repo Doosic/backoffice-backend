@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface AuthRepository extends CrudRepository<AuthEntity, Long> {
 
-  AuthEntity findByAdminId(Long adminId);
+  AuthEntity findByAuthName(String authName);
 }

@@ -21,7 +21,7 @@ public enum ErrorCode {
 
   LOGIN_FAIL(810, HttpStatus.BAD_REQUEST, "login fail"),
   LOGOUT_FAIL(811, HttpStatus.BAD_REQUEST, "logout fail"),
-  DUPLICATED_USER(812, HttpStatus.CONFLICT, "duplicated user"),
+  DUPLICATED_DATA(812, HttpStatus.CONFLICT, "duplicated data"),
   USER_NOT_EXIST(813, HttpStatus.BAD_REQUEST, "user not exist"),
   LOCKED_ACCOUNT(814, HttpStatus.BAD_REQUEST, "locked account"),
 

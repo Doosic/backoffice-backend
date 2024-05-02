@@ -1,15 +1,22 @@
 package com.sideproject.backoffice.auth;
 
+import com.sideproject.backoffice.menu.MenuService;
 import com.sideproject.common.APIDataResponse;
 import com.sideproject.common.APIResponseList;
 import com.sideproject.common.BaseController;
 import com.sideproject.domain.dto.auth.AuthRequestDto;
 import com.sideproject.domain.dto.auth.AuthResponseDto;
+import com.sideproject.domain.dto.auth.AuthMenuCreateRequestDto;
+import com.sideproject.domain.dto.menu.MenuResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,6 +26,7 @@ import java.util.List;
 public class AuthController extends BaseController {
 
   private final AuthService authService;
+  private final MenuService menuService;
 
   @GetMapping("/bs/auths")
   public ResponseEntity<byte[]> getAuths(
@@ -37,5 +45,14 @@ public class AuthController extends BaseController {
         .contentType(MediaType.APPLICATION_JSON)
         .header("Content-Encoding", "gzip")
         .body(compressedData);
+  }
+
+  @PostMapping("/bs/auth-menu")
+  public APIDataResponse<AuthResponseDto> createAuthAndMenu(
+      @Validated @RequestBody AuthMenuCreateRequestDto authMenuCreateRequestDto
+      ) {
+    AuthResponseDto authResponseDto = authService.createAuthAndMenu(this.getSessionInfo().getAdminId(), authMenuCreateRequestDto);
+
+    return APIDataResponse.of(authResponseDto);
   }
 }

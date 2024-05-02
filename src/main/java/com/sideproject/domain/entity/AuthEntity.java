@@ -1,6 +1,7 @@
 package com.sideproject.domain.entity;
 
 import com.sideproject.common.BaseTimeEntity;
+import com.sideproject.domain.dto.auth.AuthResponseDto;
 import com.sideproject.domain.enums.AuthType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,9 +22,6 @@ public class AuthEntity extends BaseTimeEntity {
   @Column(name = "auth_id")
   private Long authId;
 
-  @Column(name = "admin_id")
-  private Long adminId;
-
   @Column(name = "reg_user")
   private Long regUser;
 
@@ -35,4 +33,12 @@ public class AuthEntity extends BaseTimeEntity {
   private AuthType authType;
 
   public AuthEntity() {};
+
+  public AuthResponseDto toDto(){
+    AuthResponseDto auth = new AuthResponseDto();
+    auth.setAuthName(this.getAuthName());
+    auth.setAuthType(this.getAuthType());
+    auth.setAuthId(this.getAuthId());
+    return auth;
+  }
 }
