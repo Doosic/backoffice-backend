@@ -9,6 +9,7 @@ import com.sideproject.domain.dto.admin.AdminInfo;
 import com.sideproject.domain.dto.admin.AdminResponseDto;
 import com.sideproject.domain.dto.admin.AdminSimpleResponseDto;
 import com.sideproject.domain.dto.auth.AuthMenuCreateRequestDto;
+import com.sideproject.domain.dto.auth.AuthMenuUpdateRequest;
 import com.sideproject.domain.dto.auth.AuthRequestDto;
 import com.sideproject.domain.dto.auth.AuthResponseDto;
 import com.sideproject.domain.entity.*;
@@ -18,6 +19,7 @@ import com.sideproject.domain.repository.AuthMenuRepository;
 import com.sideproject.domain.repository.AuthRepository;
 import com.sideproject.domain.repository.MenuRepository;
 import com.sideproject.exception.APIException;
+import com.sideproject.exception.AccountException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.sideproject.domain.enums.ErrorCode.DUPLICATED_DATA;
+import static com.sideproject.domain.enums.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -110,6 +113,30 @@ public class AuthService {
           .build();
       authMenuRepository.save(menu);
     }
+
+    return authResponseDto;
+  }
+
+  @Transactional
+  public AuthResponseDto updateAuthAndMenu(
+      Long adminId,
+      AuthMenuUpdateRequest authMenuUpdateRequest
+  ) {
+
+    AuthEntity authEntity = Optional.ofNullable(authRepository.findById(authMenuUpdateRequest.getAuthId()))
+        .orElseThrow(() -> new APIException(DATA_NOT_EXIST)).get();
+
+    authMenuRepository.deleteByAuthId(authMenuUpdateRequest.getAuthId());
+
+    for(Long key : authMenuUpdateRequest.getMenuKeys()){
+      AuthMenuEntity menu = new AuthMenuEntity().builder()
+          .authId(authEntity.getAuthId())
+          .menuId(key)
+          .build();
+      authMenuRepository.save(menu);
+    }
+
+    AuthResponseDto authResponseDto = authEntity.toDto();
 
     return authResponseDto;
   }

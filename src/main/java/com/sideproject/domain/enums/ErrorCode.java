@@ -22,7 +22,7 @@ public enum ErrorCode {
   LOGIN_FAIL(810, HttpStatus.BAD_REQUEST, "login fail"),
   LOGOUT_FAIL(811, HttpStatus.BAD_REQUEST, "logout fail"),
   DUPLICATED_DATA(812, HttpStatus.CONFLICT, "duplicated data"),
-  USER_NOT_EXIST(813, HttpStatus.BAD_REQUEST, "user not exist"),
+  DATA_NOT_EXIST(813, HttpStatus.BAD_REQUEST, "data not exist"),
   LOCKED_ACCOUNT(814, HttpStatus.BAD_REQUEST, "locked account"),
 
   PASSWORD_MISMATCH(820, HttpStatus.BAD_REQUEST, "bad credentials"),

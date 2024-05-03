@@ -36,8 +36,8 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
     } else if(e.getMessage().equals(LOCKED_ACCOUNT.getMessage())){
       return handleExceptionInternal(e, LOCKED_ACCOUNT, request);
 
-    } else if(e.getMessage().equals(USER_NOT_EXIST.getMessage())){
-      return handleExceptionInternal(e, USER_NOT_EXIST, request);
+    } else if(e.getMessage().equals(DATA_NOT_EXIST.getMessage())){
+      return handleExceptionInternal(e, DATA_NOT_EXIST, request);
 
     } else if(e.getMessage().equals(UNAUTHORIZED_FAIL.getMessage())){
       return handleExceptionInternal(e, UNAUTHORIZED_FAIL, request);
@@ -45,6 +45,25 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
     return handleExceptionInternal(e, INTERNAL_ERROR, request);
   }
+
+  @ExceptionHandler(APIException.class)
+  public ResponseEntity<Object> handleGlobalExceptionAPI(Exception e, WebRequest request){
+    if(e.getMessage().equals(DUPLICATED_DATA.getMessage())){
+      return handleExceptionInternal(e, DUPLICATED_DATA, request);
+
+    } else if(e.getMessage().equals(LOCKED_ACCOUNT.getMessage())){
+      return handleExceptionInternal(e, LOCKED_ACCOUNT, request);
+
+    } else if(e.getMessage().equals(DATA_NOT_EXIST.getMessage())){
+      return handleExceptionInternal(e, DATA_NOT_EXIST, request);
+
+    } else if(e.getMessage().equals(UNAUTHORIZED_FAIL.getMessage())){
+      return handleExceptionInternal(e, UNAUTHORIZED_FAIL, request);
+    }
+
+    return handleExceptionInternal(e, INTERNAL_ERROR, request);
+  }
+
 
   @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
   public ResponseEntity<Object> handleGlobalExceptionNotFound(ChangeSetPersister.NotFoundException e, WebRequest request){

@@ -55,7 +55,7 @@ public class AdminServiceImpl implements AdminService{
     AdminEntity adminEntity = adminRepository.findByEmail(username);
 
     if(adminEntity == null){
-      throw new AccountException(USER_NOT_EXIST);
+      throw new AccountException(DATA_NOT_EXIST);
     }else if(adminEntity.getStatus().equals(LOCK)){
       throw new AccountException(LOCKED_ACCOUNT);
     }else if(adminEntity.getLoginFailCount() >= MAX_LOGIN_FAIL_COUNT){
@@ -83,7 +83,7 @@ public class AdminServiceImpl implements AdminService{
   @Override
   public AdminResponseDto getAdmin(AdminRequestDto adminRequestDto) {
     AdminEntity adminEntity = Optional.ofNullable(adminRepository.findByAdminIdAndStatus(adminRequestDto.getAdminId(), AdminStatusCode.USE))
-        .orElseThrow(() -> new AccountException(USER_NOT_EXIST)).get();
+        .orElseThrow(() -> new AccountException(DATA_NOT_EXIST)).get();
 
     return adminEntity.toDto();
   }
@@ -157,7 +157,7 @@ public class AdminServiceImpl implements AdminService{
   @Override
   public AdminResponseDto updateAdmin(AdminUpdateRequestDto adminUpdateRequestDto) {
     AdminEntity adminEntity = Optional.ofNullable(adminRepository.findByAdminIdAndStatus(adminUpdateRequestDto.getAdminId(), AdminStatusCode.USE))
-        .orElseThrow(() -> new AccountException(USER_NOT_EXIST)).get();
+        .orElseThrow(() -> new AccountException(DATA_NOT_EXIST)).get();
 
     AdminResponseDto adminResponseDto = adminUpdateRequestDto.toEntity(adminEntity).toDto();
     return adminResponseDto;
@@ -167,7 +167,7 @@ public class AdminServiceImpl implements AdminService{
   @Override
   public AdminResponseDto deleteAdmin(AdminRequestDto adminRequestDto) {
     AdminEntity adminEntity = Optional.ofNullable(adminRepository.findByAdminIdAndStatus(adminRequestDto.getAdminId(), AdminStatusCode.USE))
-        .orElseThrow(() -> new AccountException(USER_NOT_EXIST)).get();
+        .orElseThrow(() -> new AccountException(DATA_NOT_EXIST)).get();
 
     adminEntity.setStatus(AdminStatusCode.DELETE);
     AdminResponseDto adminResponseDto = adminEntity.toDto();
@@ -178,7 +178,7 @@ public class AdminServiceImpl implements AdminService{
   @Override
   public AdminResponseDto unlockAdmin(AdminRequestDto adminRequestDto) {
     AdminEntity adminEntity = Optional.ofNullable(adminRepository.findByAdminIdAndStatus(adminRequestDto.getAdminId(), AdminStatusCode.LOCK))
-        .orElseThrow(() -> new AccountException(USER_NOT_EXIST)).get();
+        .orElseThrow(() -> new AccountException(DATA_NOT_EXIST)).get();
 
     adminEntity.setStatus(AdminStatusCode.USE);
     AdminResponseDto adminResponseDto = adminEntity.toDto();

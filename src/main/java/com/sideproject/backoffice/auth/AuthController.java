@@ -4,6 +4,7 @@ import com.sideproject.backoffice.menu.MenuService;
 import com.sideproject.common.APIDataResponse;
 import com.sideproject.common.APIResponseList;
 import com.sideproject.common.BaseController;
+import com.sideproject.domain.dto.auth.AuthMenuUpdateRequest;
 import com.sideproject.domain.dto.auth.AuthRequestDto;
 import com.sideproject.domain.dto.auth.AuthResponseDto;
 import com.sideproject.domain.dto.auth.AuthMenuCreateRequestDto;
@@ -14,10 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -52,6 +50,15 @@ public class AuthController extends BaseController {
       @Validated @RequestBody AuthMenuCreateRequestDto authMenuCreateRequestDto
       ) {
     AuthResponseDto authResponseDto = authService.createAuthAndMenu(this.getSessionInfo().getAdminId(), authMenuCreateRequestDto);
+
+    return APIDataResponse.of(authResponseDto);
+  }
+
+  @PutMapping("/bs/auth-menu")
+  public APIDataResponse<AuthResponseDto> updateAuthAndMenu(
+      @Validated @RequestBody AuthMenuUpdateRequest authMenuUpdateRequest
+  ) {
+    AuthResponseDto authResponseDto = authService.updateAuthAndMenu(this.getSessionInfo().getAdminId(), authMenuUpdateRequest);
 
     return APIDataResponse.of(authResponseDto);
   }

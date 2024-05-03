@@ -6,9 +6,7 @@ import lombok.Getter;
 @Getter
 public class APIException extends RuntimeException{
 
-  private final ErrorCode errorCode;
-
   public APIException(ErrorCode errorCode) {
-    this.errorCode = errorCode;
+    super(errorCode.getMessage());
   }
 }
