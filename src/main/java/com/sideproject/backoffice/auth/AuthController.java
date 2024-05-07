@@ -1,13 +1,12 @@
 package com.sideproject.backoffice.auth;
 
+import com.sideproject.backoffice.function.FunctionService;
 import com.sideproject.backoffice.menu.MenuService;
 import com.sideproject.common.APIDataResponse;
 import com.sideproject.common.APIResponseList;
 import com.sideproject.common.BaseController;
-import com.sideproject.domain.dto.auth.AuthMenuUpdateRequest;
-import com.sideproject.domain.dto.auth.AuthRequestDto;
-import com.sideproject.domain.dto.auth.AuthResponseDto;
-import com.sideproject.domain.dto.auth.AuthMenuCreateRequestDto;
+import com.sideproject.domain.dto.auth.*;
+import com.sideproject.domain.dto.function.FunctionResponseDto;
 import com.sideproject.domain.dto.menu.MenuResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +24,7 @@ public class AuthController extends BaseController {
 
   private final AuthService authService;
   private final MenuService menuService;
+  private final FunctionService functionService;
 
   @GetMapping("/bs/auths")
   public ResponseEntity<byte[]> getAuths(
@@ -61,5 +61,20 @@ public class AuthController extends BaseController {
     AuthResponseDto authResponseDto = authService.updateAuthAndMenu(this.getSessionInfo().getAdminId(), authMenuUpdateRequest);
 
     return APIDataResponse.of(authResponseDto);
+  }
+
+  @GetMapping("/bs/all-func-menu")
+  public ResponseEntity<byte[]> getAllFuncAndMenu() {
+    AuthFuncsAndMenusDto funcsAndMenusDto = new AuthFuncsAndMenusDto();
+    funcsAndMenusDto.setMenuList(menuService.getMenus());
+    funcsAndMenusDto.setFuncList(functionService.getFunctions());
+
+    String jsonData = this.convertObjectToJson(APIDataResponse.of(funcsAndMenusDto));
+    byte[] compressedData = this.compressData(jsonData);
+
+    return ResponseEntity.ok()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header("Content-Encoding", "gzip")
+        .body(compressedData);
   }
 }

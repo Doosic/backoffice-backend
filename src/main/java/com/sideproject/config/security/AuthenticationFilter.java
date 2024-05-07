@@ -88,7 +88,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter i
     claims.put("email",admin.getEmail());
     claims.put("name",admin.getName());
     claims.put("status",admin.getStatus());
-    claims.put("authId",admin.getAuthId());
+    claims.put("menuId",admin.getMenuId());
+    claims.put("funcId",admin.getFuncId());
 
     Token jwtToken = jwtTokenProvider.generateTokenHS512(
         admin.getEmail(),
@@ -113,7 +114,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter i
         .email(admin.getEmail())
         .name(admin.getName())
         .status(admin.getStatus())
-        .authId(admin.getAuthId())
+        .menuId(admin.getMenuId())
+        .funcId(admin.getFuncId())
         .build();
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);

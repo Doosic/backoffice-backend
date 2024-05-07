@@ -16,5 +16,6 @@ public class AdminInfo {
   private String email;
   private String name;
   private AdminStatusCode status;
-  private Long authId;
+  private Long menuId;
+  private Long funcId;
 }

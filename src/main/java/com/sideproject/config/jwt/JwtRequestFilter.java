@@ -82,7 +82,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         claims.put("email",admin.getEmail());
         claims.put("name",admin.getName());
         claims.put("status",admin.getStatus());
-        claims.put("authId",admin.getAuthId());
+        claims.put("menuId",admin.getMenuId());
+        claims.put("funcId",admin.getFuncId());
 
         Token jwtToken = jwtTokenProvider.generateTokenHS512(
             userEmail,

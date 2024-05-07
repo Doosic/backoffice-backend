@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class MenuRequestDto {
 
-  private Long authId;
+  private Long menuId;
 }

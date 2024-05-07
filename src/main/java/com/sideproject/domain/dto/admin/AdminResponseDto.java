@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminResponseDto {
 
   private Long adminId;
-  private Long authId;
+  private Long menuId;
+  private Long funcId;
   private String email;
   private String name;
   private AdminStatusCode status;

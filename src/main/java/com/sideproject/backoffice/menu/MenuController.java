@@ -36,7 +36,7 @@ public class MenuController extends BaseController {
   public ResponseEntity<byte[]> getMenuKeys(
       MenuRequestDto menuRequestDto
   ) {
-    List<MenuSimpleResponseDto> menuResponseDtos = menuService.getMenuKeys(menuRequestDto.getAuthId());
+    List<MenuSimpleResponseDto> menuResponseDtos = menuService.getMenuKeys(menuRequestDto.getMenuId());
 
     String jsonData = this.convertObjectToJson(APIDataResponse.of(menuResponseDtos));
     byte[] compressedData = this.compressData(jsonData);
@@ -49,7 +49,7 @@ public class MenuController extends BaseController {
 
   @GetMapping("/bs/menus")
   public ResponseEntity<byte[]> getMenus() {
-    List<MenuResponseDto> menuResponseDtos = menuService.getAuthMenus(this.getSessionInfo().getAuthId());
+    List<MenuResponseDto> menuResponseDtos = menuService.getAuthMenus(this.getSessionInfo().getMenuId());
 
     String jsonData = this.convertObjectToJson(APIDataResponse.of(menuResponseDtos));
     byte[] compressedData = this.compressData(jsonData);

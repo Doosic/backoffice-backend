@@ -58,7 +58,7 @@ public class MenuService {
     return roots;
   }
 
-  public List<MenuResponseDto> getAuthMenus(Long authId) {
+  public List<MenuResponseDto> getAuthMenus(Long menuId) {
     JPAQueryFactory queryFactory = new JPAQueryFactory(em);
     QAuthMenuEntity authMenuEntity = QAuthMenuEntity.authMenuEntity;
     QMenuEntity menuEntity = QMenuEntity.menuEntity;
@@ -73,7 +73,7 @@ public class MenuService {
         )).from(authMenuEntity)
         .leftJoin(menuEntity)
         .on(authMenuEntity.menuId.eq(menuEntity.menuId))
-        .where(authMenuEntity.authId.eq(authId));
+        .where(authMenuEntity.authId.eq(menuId));
 
     List<MenuResponseDto> allMenus = jpaQuery.fetch();
 
@@ -100,7 +100,7 @@ public class MenuService {
     return roots;
   }
 
-  public List<MenuSimpleResponseDto> getMenuKeys(Long authId) {
+  public List<MenuSimpleResponseDto> getMenuKeys(Long menuId) {
     JPAQueryFactory queryFactory = new JPAQueryFactory(em);
     QAuthMenuEntity authMenuEntity = QAuthMenuEntity.authMenuEntity;
     QMenuEntity menuEntity = QMenuEntity.menuEntity;
@@ -110,7 +110,7 @@ public class MenuService {
         )).from(authMenuEntity)
         .leftJoin(menuEntity)
         .on(authMenuEntity.menuId.eq(menuEntity.menuId))
-        .where(authMenuEntity.authId.eq(authId));
+        .where(authMenuEntity.authId.eq(menuId));
 
     List<MenuSimpleResponseDto> allMenus = jpaQuery.fetch();
 
