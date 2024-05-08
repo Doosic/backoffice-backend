@@ -8,13 +8,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sideproject.domain.dto.admin.AdminInfo;
 import com.sideproject.domain.dto.admin.AdminResponseDto;
 import com.sideproject.domain.dto.admin.AdminSimpleResponseDto;
-import com.sideproject.domain.dto.auth.AuthMenuCreateRequestDto;
-import com.sideproject.domain.dto.auth.AuthMenuUpdateRequest;
-import com.sideproject.domain.dto.auth.AuthRequestDto;
-import com.sideproject.domain.dto.auth.AuthResponseDto;
+import com.sideproject.domain.dto.auth.*;
 import com.sideproject.domain.entity.*;
 import com.sideproject.domain.enums.AdminStatusCode;
 import com.sideproject.domain.enums.AuthType;
+import com.sideproject.domain.repository.AuthFuncRepository;
 import com.sideproject.domain.repository.AuthMenuRepository;
 import com.sideproject.domain.repository.AuthRepository;
 import com.sideproject.domain.repository.MenuRepository;
@@ -42,6 +40,7 @@ public class AuthService {
   private EntityManager em;
   private final AuthRepository authRepository;
   private final AuthMenuRepository authMenuRepository;
+  private final AuthFuncRepository authFuncRepository;
 
   public Page<AuthResponseDto> getAuths(AuthRequestDto authRequestDto){
     PageRequest pageRequest = PageRequest.of(authRequestDto.getPageNum() - 1, authRequestDto.getPageRowCount());
@@ -112,6 +111,34 @@ public class AuthService {
           .menuId(key)
           .build();
       authMenuRepository.save(menu);
+    }
+
+    return authResponseDto;
+  }
+
+  @Transactional
+  public AuthResponseDto createAuthAndFunc(
+      Long adminId,
+      AuthFuncCreateRequestDto authFuncCreateRequestDto
+  ) {
+    this.isDuplicateAuthName(authFuncCreateRequestDto.getAuthName());
+
+    AuthEntity authEntity = new AuthEntity().builder()
+        .authName(authFuncCreateRequestDto.getAuthName())
+        .authType(AuthType.FUNC)
+        .regUser(adminId)
+        .build();
+
+    authRepository.save(authEntity);
+
+    AuthResponseDto authResponseDto = authEntity.toDto();
+
+    for(Long key : authFuncCreateRequestDto.getFuncKeys()){
+      AuthFuncEntity menu = new AuthFuncEntity().builder()
+          .authId(authResponseDto.getAuthId())
+          .funcId(key)
+          .build();
+      authFuncRepository.save(menu);
     }
 
     return authResponseDto;
