@@ -1,5 +1,6 @@
 package com.sideproject.backoffice.auth;
 
+import com.sideproject.annotation.BeforeRequiresAuthorization;
 import com.sideproject.backoffice.function.FunctionService;
 import com.sideproject.backoffice.menu.MenuService;
 import com.sideproject.common.APIDataResponse;
@@ -46,6 +47,7 @@ public class AuthController extends BaseController {
   }
 
   @PostMapping("/bs/auth-menu")
+  @BeforeRequiresAuthorization("auth-menu-create")
   public APIDataResponse<AuthResponseDto> createAuthAndMenu(
       @Validated @RequestBody AuthMenuCreateRequestDto authMenuCreateRequestDto
       ) {
@@ -55,6 +57,7 @@ public class AuthController extends BaseController {
   }
 
   @PostMapping("/bs/auth-func")
+  @BeforeRequiresAuthorization("auth-func-create")
   public APIDataResponse<AuthResponseDto> createAuthAndFunc(
       @Validated @RequestBody AuthFuncCreateRequestDto authMenuCreateRequestDto
   ) {
@@ -64,6 +67,7 @@ public class AuthController extends BaseController {
   }
 
   @PutMapping("/bs/auth-menu")
+  @BeforeRequiresAuthorization("auth-menu-update")
   public APIDataResponse<AuthResponseDto> updateAuthAndMenu(
       @Validated @RequestBody AuthMenuUpdateRequest authMenuUpdateRequest
   ) {
@@ -73,6 +77,7 @@ public class AuthController extends BaseController {
   }
 
   @PutMapping("/bs/auth-func")
+  @BeforeRequiresAuthorization("auth-func-update")
   public APIDataResponse<AuthResponseDto> updateAuthAndFunc(
       @Validated @RequestBody AuthFuncUpdateRequest authFuncUpdateRequest
   ) {

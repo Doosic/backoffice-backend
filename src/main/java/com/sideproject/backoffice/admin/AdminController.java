@@ -1,5 +1,6 @@
 package com.sideproject.backoffice.admin;
 
+import com.sideproject.annotation.BeforeRequiresAuthorization;
 import com.sideproject.common.APIDataResponse;
 import com.sideproject.common.APIResponseList;
 import com.sideproject.common.BaseController;
@@ -40,7 +41,8 @@ public class AdminController extends BaseController {
     return APIDataResponse.of(adminResponseDto);
   }
 
-  @PostMapping("/bp/admin")
+  @PostMapping("/bs/admin")
+  @BeforeRequiresAuthorization("admin-create")
   public APIDataResponse<AdminResponseDto> createAdmin(
       @Validated @RequestBody AdminCreateRequestDto adminCreateRequestDto
   ) {
@@ -69,6 +71,7 @@ public class AdminController extends BaseController {
   }
 
   @PutMapping("/bs/admin")
+  @BeforeRequiresAuthorization("admin-update")
   public APIDataResponse<AdminResponseDto> updateAdmin(
       @Validated @RequestBody AdminUpdateRequestDto adminUpdateRequestDto
   ) {
@@ -78,6 +81,7 @@ public class AdminController extends BaseController {
   }
 
   @DeleteMapping("/bs/admin")
+  @BeforeRequiresAuthorization("admin-delete")
   public APIDataResponse<AdminResponseDto> deleteAdmin(
       @Validated @RequestBody AdminRequestDto adminRequestDto
   ) {
@@ -87,6 +91,7 @@ public class AdminController extends BaseController {
   }
 
   @PostMapping("/bs/admin/unlock")
+  @BeforeRequiresAuthorization("admin-unlock")
   public APIDataResponse<AdminResponseDto> unlockAdmin(
       @Validated @RequestBody AdminRequestDto adminRequestDto
   ) {

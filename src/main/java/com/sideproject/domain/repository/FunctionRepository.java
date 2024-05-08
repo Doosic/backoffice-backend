@@ -8,4 +8,5 @@ import java.util.List;
 public interface FunctionRepository extends CrudRepository<FunctionEntity, Long> {
 
   List<FunctionEntity> findAllByOrderByFuncIdAsc();
+  List<FunctionEntity> findAll();
 }

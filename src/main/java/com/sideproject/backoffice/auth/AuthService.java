@@ -9,13 +9,11 @@ import com.sideproject.domain.dto.admin.AdminInfo;
 import com.sideproject.domain.dto.admin.AdminResponseDto;
 import com.sideproject.domain.dto.admin.AdminSimpleResponseDto;
 import com.sideproject.domain.dto.auth.*;
+import com.sideproject.domain.dto.menu.MenuResponseDto;
 import com.sideproject.domain.entity.*;
 import com.sideproject.domain.enums.AdminStatusCode;
 import com.sideproject.domain.enums.AuthType;
-import com.sideproject.domain.repository.AuthFuncRepository;
-import com.sideproject.domain.repository.AuthMenuRepository;
-import com.sideproject.domain.repository.AuthRepository;
-import com.sideproject.domain.repository.MenuRepository;
+import com.sideproject.domain.repository.*;
 import com.sideproject.exception.APIException;
 import com.sideproject.exception.AccountException;
 import jakarta.persistence.EntityManager;
@@ -27,7 +25,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.sideproject.domain.enums.ErrorCode.*;
@@ -41,6 +41,7 @@ public class AuthService {
   private final AuthRepository authRepository;
   private final AuthMenuRepository authMenuRepository;
   private final AuthFuncRepository authFuncRepository;
+  private final FunctionRepository functionRepository;
 
   public Page<AuthResponseDto> getAuths(AuthRequestDto authRequestDto){
     PageRequest pageRequest = PageRequest.of(authRequestDto.getPageNum() - 1, authRequestDto.getPageRowCount());
@@ -131,12 +132,20 @@ public class AuthService {
 
     authRepository.save(authEntity);
 
+    List<FunctionEntity> functions = functionRepository.findAll();
+    Map<Long, String> funcMap = new HashMap<>();
+
+    for (FunctionEntity func : functions){
+      funcMap.put(func.getFuncId(), func.getFuncName());
+    }
+
     AuthResponseDto authResponseDto = authEntity.toDto();
 
     for(Long key : authFuncCreateRequestDto.getFuncKeys()){
       AuthFuncEntity menu = new AuthFuncEntity().builder()
           .authId(authResponseDto.getAuthId())
           .funcId(key)
+          .funcName(funcMap.get(key))
           .build();
       authFuncRepository.save(menu);
     }
@@ -177,12 +186,20 @@ public class AuthService {
     AuthEntity authEntity = Optional.ofNullable(authRepository.findById(authFuncUpdateRequest.getAuthId()))
         .orElseThrow(() -> new APIException(DATA_NOT_EXIST)).get();
 
-    authMenuRepository.deleteByAuthId(authFuncUpdateRequest.getAuthId());
+    authFuncRepository.deleteByAuthId(authFuncUpdateRequest.getAuthId());
+
+    List<FunctionEntity> functions = functionRepository.findAll();
+    Map<Long, String> funcMap = new HashMap<>();
+
+    for (FunctionEntity func : functions){
+      funcMap.put(func.getFuncId(), func.getFuncName());
+    }
 
     for(Long key : authFuncUpdateRequest.getFuncKeys()){
       AuthFuncEntity menu = new AuthFuncEntity().builder()
           .authId(authEntity.getAuthId())
           .funcId(key)
+          .funcName(funcMap.get(key))
           .build();
       authFuncRepository.save(menu);
     }

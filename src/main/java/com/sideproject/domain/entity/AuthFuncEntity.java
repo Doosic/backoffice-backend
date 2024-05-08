@@ -25,5 +25,8 @@ public class AuthFuncEntity {
   @Column(name = "func_id")
   private Long funcId;
 
+  @Column(name = "func_name")
+  private String funcName;
+
   public AuthFuncEntity () {};
 }
