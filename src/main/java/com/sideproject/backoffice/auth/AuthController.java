@@ -72,6 +72,15 @@ public class AuthController extends BaseController {
     return APIDataResponse.of(authResponseDto);
   }
 
+  @PutMapping("/bs/auth-func")
+  public APIDataResponse<AuthResponseDto> updateAuthAndFunc(
+      @Validated @RequestBody AuthFuncUpdateRequest authFuncUpdateRequest
+  ) {
+    AuthResponseDto authResponseDto = authService.updateAuthAndFunc(this.getSessionInfo().getAdminId(), authFuncUpdateRequest);
+
+    return APIDataResponse.of(authResponseDto);
+  }
+
   @GetMapping("/bs/all-func-menu")
   public ResponseEntity<byte[]> getAllFuncAndMenu() {
     AuthFuncsAndMenusDto funcsAndMenusDto = new AuthFuncsAndMenusDto();

@@ -168,6 +168,30 @@ public class AuthService {
     return authResponseDto;
   }
 
+  @Transactional
+  public AuthResponseDto updateAuthAndFunc(
+      Long adminId,
+      AuthFuncUpdateRequest authFuncUpdateRequest
+  ) {
+
+    AuthEntity authEntity = Optional.ofNullable(authRepository.findById(authFuncUpdateRequest.getAuthId()))
+        .orElseThrow(() -> new APIException(DATA_NOT_EXIST)).get();
+
+    authMenuRepository.deleteByAuthId(authFuncUpdateRequest.getAuthId());
+
+    for(Long key : authFuncUpdateRequest.getFuncKeys()){
+      AuthFuncEntity menu = new AuthFuncEntity().builder()
+          .authId(authEntity.getAuthId())
+          .funcId(key)
+          .build();
+      authFuncRepository.save(menu);
+    }
+
+    AuthResponseDto authResponseDto = authEntity.toDto();
+
+    return authResponseDto;
+  }
+
   private void isDuplicateAuthName(String authName){
     AuthEntity authEntity = authRepository.findByAuthName(authName);
 
