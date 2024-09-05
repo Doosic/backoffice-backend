@@ -1,8 +1,7 @@
 package com.sideproject.domain.entity;
 
-import com.sideproject.common.BaseTimeEntity;
 import com.sideproject.domain.dto.auth.AuthResponseDto;
-import com.sideproject.domain.enums.AuthType;
+import com.sideproject.domain.enums.MenuTypeCode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,30 +14,40 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "bk_auth")
-public class AuthEntity extends BaseTimeEntity {
+public class AuthEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "auth_id")
   private Long authId;
 
-  @Column(name = "reg_user")
-  private Long regUser;
+  @Column(name = "auth_parent")
+  private Long authParent;
 
   @Column(name = "auth_name")
   private String authName;
 
-  @Column(name = "auth_type")
+  @Column(name = "auth_level")
+  private Integer authLevel;
+
+  @Column(name = "auth_order")
+  private Integer authOrder;
+
+  @Column(name = "menu_type")
   @Enumerated(EnumType.STRING)
-  private AuthType authType;
+  private MenuTypeCode menuTypeCode;
+
+  @Column(name = "auth_icon")
+  private String authIcon;
 
   public AuthEntity() {};
 
-  public AuthResponseDto toDto(){
-    AuthResponseDto auth = new AuthResponseDto();
-    auth.setAuthName(this.getAuthName());
-    auth.setAuthType(this.getAuthType());
-    auth.setAuthId(this.getAuthId());
-    return auth;
+  public AuthResponseDto toDto() {
+    AuthResponseDto func = new AuthResponseDto();
+    func.setKey(this.getAuthId());
+    func.setFuncParent(this.getAuthParent());
+    func.setLabel(this.getAuthName());
+    func.setIcon(this.getAuthIcon());
+    return func;
   }
 }

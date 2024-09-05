@@ -1,21 +1,15 @@
 package com.sideproject.backoffice.auth;
 
-import com.sideproject.annotation.BeforeRequiresAuthorization;
-import com.sideproject.backoffice.function.FunctionService;
-import com.sideproject.backoffice.menu.MenuService;
 import com.sideproject.common.APIDataResponse;
-import com.sideproject.common.APIResponseList;
 import com.sideproject.common.BaseController;
-import com.sideproject.domain.dto.auth.*;
-import com.sideproject.domain.dto.function.FunctionResponseDto;
-import com.sideproject.domain.dto.menu.MenuResponseDto;
+import com.sideproject.domain.dto.auth.AuthRequestDto;
+import com.sideproject.domain.dto.auth.AuthResponseDto;
+import com.sideproject.domain.dto.auth.AuthSimpleResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -24,20 +18,12 @@ import java.util.List;
 public class AuthController extends BaseController {
 
   private final AuthService authService;
-  private final MenuService menuService;
-  private final FunctionService functionService;
 
-  @GetMapping("/bs/auths")
-  public ResponseEntity<byte[]> getAuths(
-      AuthRequestDto authRequestDto
-  ) {
-    Page<AuthResponseDto> auths = authService.getAuths(authRequestDto);
+  @GetMapping("/bs/all-auth")
+  public ResponseEntity<byte[]> getAllAuth() {
+    List<AuthResponseDto> authResponseDtos = authService.getAuths();
 
-    APIResponseList APIResponseList = new APIResponseList();
-    APIResponseList.setItemList(auths.getContent());
-    APIResponseList.setItemTotalCnt(auths.getTotalElements());
-
-    String jsonData = this.convertObjectToJson(APIDataResponse.of(APIResponseList));
+    String jsonData = this.convertObjectToJson(APIDataResponse.of(authResponseDtos));
     byte[] compressedData = this.compressData(jsonData);
 
     return ResponseEntity.ok()
@@ -46,53 +32,26 @@ public class AuthController extends BaseController {
         .body(compressedData);
   }
 
-  @PostMapping("/bs/auth-menu")
-  @BeforeRequiresAuthorization("auth-menu-create")
-  public APIDataResponse<AuthResponseDto> createAuthAndMenu(
-      @Validated @RequestBody AuthMenuCreateRequestDto authMenuCreateRequestDto
-      ) {
-    AuthResponseDto authResponseDto = authService.createAuthAndMenu(this.getSessionInfo().getAdminId(), authMenuCreateRequestDto);
+  @GetMapping("/bs/auth-keys")
+  public ResponseEntity<byte[]> getAuthKeys(
+      AuthRequestDto authRequestDto
+  ){
+    List<AuthSimpleResponseDto> funcResponseDtos = authService.getAuthKeys(authRequestDto.getAuthId());
 
-    return APIDataResponse.of(authResponseDto);
+    String jsonData = this.convertObjectToJson(APIDataResponse.of(funcResponseDtos));
+    byte[] compressedData = this.compressData(jsonData);
+
+    return ResponseEntity.ok()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header("Content-Encoding", "gzip")
+        .body(compressedData);
   }
 
-  @PostMapping("/bs/auth-func")
-  @BeforeRequiresAuthorization("auth-func-create")
-  public APIDataResponse<AuthResponseDto> createAuthAndFunc(
-      @Validated @RequestBody AuthFuncCreateRequestDto authMenuCreateRequestDto
-  ) {
-    AuthResponseDto authResponseDto = authService.createAuthAndFunc(this.getSessionInfo().getAdminId(), authMenuCreateRequestDto);
+  @GetMapping("/bs/funcs")
+  public ResponseEntity<byte[]> getFuncs(){
+    List<AuthResponseDto> authResponseDtos = authService.getAuthFuncs(this.getSessionInfo().getAuthId());
 
-    return APIDataResponse.of(authResponseDto);
-  }
-
-  @PutMapping("/bs/auth-menu")
-  @BeforeRequiresAuthorization("auth-menu-update")
-  public APIDataResponse<AuthResponseDto> updateAuthAndMenu(
-      @Validated @RequestBody AuthMenuUpdateRequest authMenuUpdateRequest
-  ) {
-    AuthResponseDto authResponseDto = authService.updateAuthAndMenu(this.getSessionInfo().getAdminId(), authMenuUpdateRequest);
-
-    return APIDataResponse.of(authResponseDto);
-  }
-
-  @PutMapping("/bs/auth-func")
-  @BeforeRequiresAuthorization("auth-func-update")
-  public APIDataResponse<AuthResponseDto> updateAuthAndFunc(
-      @Validated @RequestBody AuthFuncUpdateRequest authFuncUpdateRequest
-  ) {
-    AuthResponseDto authResponseDto = authService.updateAuthAndFunc(this.getSessionInfo().getAdminId(), authFuncUpdateRequest);
-
-    return APIDataResponse.of(authResponseDto);
-  }
-
-  @GetMapping("/bs/all-func-menu")
-  public ResponseEntity<byte[]> getAllFuncAndMenu() {
-    AuthFuncsAndMenusDto funcsAndMenusDto = new AuthFuncsAndMenusDto();
-    funcsAndMenusDto.setMenuList(menuService.getMenus());
-    funcsAndMenusDto.setFuncList(functionService.getFunctions());
-
-    String jsonData = this.convertObjectToJson(APIDataResponse.of(funcsAndMenusDto));
+    String jsonData = this.convertObjectToJson(APIDataResponse.of(authResponseDtos));
     byte[] compressedData = this.compressData(jsonData);
 
     return ResponseEntity.ok()

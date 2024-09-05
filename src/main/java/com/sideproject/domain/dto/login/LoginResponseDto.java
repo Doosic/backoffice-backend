@@ -13,5 +13,5 @@ public class LoginResponseDto {
   private String name;
   private AdminStatusCode status;
   private Long menuId;
-  private Long funcId;
+  private Long authId;
 }

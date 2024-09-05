@@ -5,8 +5,6 @@ import com.sideproject.backoffice.admin.AdminService;
 import com.sideproject.common.APIErrorResponse;
 import com.sideproject.common.CProperties;
 import com.sideproject.domain.dto.admin.AdminResponseDto;
-import com.sideproject.domain.entity.AuthEntity;
-import com.sideproject.domain.repository.AuthRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -83,7 +81,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         claims.put("name",admin.getName());
         claims.put("status",admin.getStatus());
         claims.put("menuId",admin.getMenuId());
-        claims.put("funcId",admin.getFuncId());
+        claims.put("authId",admin.getAuthId());
 
         Token jwtToken = jwtTokenProvider.generateTokenHS512(
             userEmail,

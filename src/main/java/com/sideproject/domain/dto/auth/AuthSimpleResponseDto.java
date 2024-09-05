@@ -3,7 +3,7 @@ package com.sideproject.domain.dto.auth;
 import lombok.Data;
 
 @Data
-public class AuthRequestDto {
+public class AuthSimpleResponseDto {
 
-  private Long authId;
+  private Long key;
 }

@@ -10,7 +10,7 @@ public class AdminResponseDto {
 
   private Long adminId;
   private Long menuId;
-  private Long funcId;
+  private Long authId;
   private String email;
   private String name;
   private AdminStatusCode status;

@@ -11,22 +11,22 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "bk_auth_function")
-public class AuthFuncEntity {
+@Table(name = "bk_role_auth")
+public class RoleAuthEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "auth_func_id")
-  private Long authFuncId;
+  @Column(name = "auth_role_id")
+  private Long funcRoleId;
+
+  @Column(name = "role_id")
+  private Long roleId;
 
   @Column(name = "auth_id")
   private Long authId;
 
-  @Column(name = "func_id")
-  private Long funcId;
+  @Column(name = "auth_name")
+  private String authName;
 
-  @Column(name = "func_name")
-  private String funcName;
-
-  public AuthFuncEntity () {};
+  public RoleAuthEntity() {};
 }

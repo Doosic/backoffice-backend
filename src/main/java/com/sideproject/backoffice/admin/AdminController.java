@@ -27,7 +27,7 @@ public class AdminController extends BaseController {
     adminInfo.setEmail(this.getSessionInfo().getEmail());
     adminInfo.setStatus(this.getSessionInfo().getStatus());
     adminInfo.setMenuId(this.getSessionInfo().getMenuId());
-    adminInfo.setFuncId(this.getSessionInfo().getFuncId());
+    adminInfo.setAuthId(this.getSessionInfo().getAuthId());
 
     return APIDataResponse.of(adminInfo);
   }

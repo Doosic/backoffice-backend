@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum AuthType {
+public enum RoleType {
 
   MENU("MENU"),
-  FUNC("FUNC");
+  AUTH("AUTH");
 
   private final String status;
 }

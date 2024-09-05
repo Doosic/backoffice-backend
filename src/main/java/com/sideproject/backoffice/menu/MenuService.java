@@ -6,8 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sideproject.domain.dto.menu.MenuResponseDto;
 import com.sideproject.domain.dto.menu.MenuSimpleResponseDto;
 import com.sideproject.domain.entity.MenuEntity;
-import com.sideproject.domain.entity.QAuthMenuEntity;
 import com.sideproject.domain.entity.QMenuEntity;
+import com.sideproject.domain.entity.QRoleMenuEntity;
 import com.sideproject.domain.repository.AdminRepository;
 import com.sideproject.domain.repository.MenuRepository;
 import jakarta.persistence.EntityManager;
@@ -60,7 +60,7 @@ public class MenuService {
 
   public List<MenuResponseDto> getAuthMenus(Long menuId) {
     JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-    QAuthMenuEntity authMenuEntity = QAuthMenuEntity.authMenuEntity;
+    QRoleMenuEntity roleMenuEntity = QRoleMenuEntity.roleMenuEntity;
     QMenuEntity menuEntity = QMenuEntity.menuEntity;
 
     JPAQuery<MenuResponseDto> jpaQuery = queryFactory.select(Projections.fields(MenuResponseDto.class,
@@ -70,10 +70,10 @@ public class MenuService {
         menuEntity.menuIcon.as("icon"),
         menuEntity.menuLink.as("to"),
         menuEntity.menuQuery.as("query")
-        )).from(authMenuEntity)
+        )).from(roleMenuEntity)
         .leftJoin(menuEntity)
-        .on(authMenuEntity.menuId.eq(menuEntity.menuId))
-        .where(authMenuEntity.authId.eq(menuId));
+        .on(roleMenuEntity.menuId.eq(menuEntity.menuId))
+        .where(roleMenuEntity.roleId.eq(menuId));
 
     List<MenuResponseDto> allMenus = jpaQuery.fetch();
 
@@ -102,15 +102,15 @@ public class MenuService {
 
   public List<MenuSimpleResponseDto> getMenuKeys(Long menuId) {
     JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-    QAuthMenuEntity authMenuEntity = QAuthMenuEntity.authMenuEntity;
+    QRoleMenuEntity roleMenuEntity = QRoleMenuEntity.roleMenuEntity;
     QMenuEntity menuEntity = QMenuEntity.menuEntity;
 
     JPAQuery<MenuSimpleResponseDto> jpaQuery = queryFactory.select(Projections.fields(MenuSimpleResponseDto.class,
             menuEntity.menuId.as("key")
-        )).from(authMenuEntity)
+        )).from(roleMenuEntity)
         .leftJoin(menuEntity)
-        .on(authMenuEntity.menuId.eq(menuEntity.menuId))
-        .where(authMenuEntity.authId.eq(menuId));
+        .on(roleMenuEntity.menuId.eq(menuEntity.menuId))
+        .where(roleMenuEntity.roleId.eq(menuId));
 
     List<MenuSimpleResponseDto> allMenus = jpaQuery.fetch();
 

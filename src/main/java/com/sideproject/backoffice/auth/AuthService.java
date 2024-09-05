@@ -1,36 +1,24 @@
 package com.sideproject.backoffice.auth;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sideproject.domain.dto.admin.AdminInfo;
-import com.sideproject.domain.dto.admin.AdminResponseDto;
-import com.sideproject.domain.dto.admin.AdminSimpleResponseDto;
-import com.sideproject.domain.dto.auth.*;
-import com.sideproject.domain.dto.menu.MenuResponseDto;
-import com.sideproject.domain.entity.*;
-import com.sideproject.domain.enums.AdminStatusCode;
-import com.sideproject.domain.enums.AuthType;
-import com.sideproject.domain.repository.*;
-import com.sideproject.exception.APIException;
-import com.sideproject.exception.AccountException;
+import com.sideproject.domain.dto.auth.AuthResponseDto;
+import com.sideproject.domain.dto.auth.AuthSimpleResponseDto;
+import com.sideproject.domain.entity.AuthEntity;
+import com.sideproject.domain.entity.QAuthEntity;
+import com.sideproject.domain.entity.QRoleAuthEntity;
+import com.sideproject.domain.repository.AuthRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
-import static com.sideproject.domain.enums.ErrorCode.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -39,181 +27,90 @@ public class AuthService {
   @PersistenceContext
   private EntityManager em;
   private final AuthRepository authRepository;
-  private final AuthMenuRepository authMenuRepository;
-  private final AuthFuncRepository authFuncRepository;
-  private final FunctionRepository functionRepository;
 
-  public Page<AuthResponseDto> getAuths(AuthRequestDto authRequestDto){
-    PageRequest pageRequest = PageRequest.of(authRequestDto.getPageNum() - 1, authRequestDto.getPageRowCount());
+  public List<AuthResponseDto> getAuths() {
+    List<AuthResponseDto> allFunctuins = authRepository.findAllByOrderByAuthIdAsc()
+        .stream()
+        .map(AuthEntity::toDto)
+        .collect(Collectors.toList());
 
-    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-    QAuthEntity authEntity = QAuthEntity.authEntity;
-    QAdminEntity adminEntity = QAdminEntity.adminEntity;
+    Map<Long, AuthResponseDto> funcMap = new HashMap<>();
+    List<AuthResponseDto> roots = new ArrayList<>();
 
-    StringTemplate dateTime = Expressions.stringTemplate("TO_CHAR({0}, {1})", authEntity.createDate, "YYYY-MM-DD HH24:MI:SS");
+    for (AuthResponseDto func : allFunctuins){
+      func.setChildren(new ArrayList<>());
+      funcMap.put(func.getKey(), func);
+    }
 
-    JPAQuery<AuthResponseDto> jpaQuery = queryFactory.select(Projections.fields(AuthResponseDto.class,
-        authEntity.authId,
-        authEntity.authName,
-        authEntity.authType,
-        dateTime.as("createDate"),
-        Projections.fields(AdminSimpleResponseDto.class,
-            adminEntity.name
-            ).as("regUser")
-        ))
-        .from(authEntity)
-        .leftJoin(adminEntity).on(authEntity.regUser.eq(adminEntity.adminId))
-        .offset(pageRequest.getOffset())
-        .limit(pageRequest.getPageSize())
-        .orderBy(authEntity.authId.desc());
-
-    JPAQuery<Long> countQuery = queryFactory
-        .select(authEntity.count())
-        .from(authEntity);
-
-    if(authRequestDto.getSearchTitle() != null){
-      switch (authRequestDto.getSearchTitle()){
-        case "name" -> {
-          jpaQuery.where(authEntity.authName.contains(authRequestDto.getSearchText()));
-          countQuery.where(authEntity.authName.contains(authRequestDto.getSearchText()));
+    for (AuthResponseDto func : allFunctuins){
+      Long parentId = func.getFuncParent();
+      if (parentId != -1){
+        AuthResponseDto parentFunc = funcMap.get(parentId);
+        if (parentFunc != null){
+          parentFunc.getChildren().add(func);
         }
-        case "type" -> {
-          jpaQuery.where(authEntity.authType.eq(AuthType.valueOf(authRequestDto.getSearchText())));
-          countQuery.where(authEntity.authType.eq(AuthType.valueOf(authRequestDto.getSearchText())));
-        }
+      } else {
+        roots.add(func);
       }
     }
 
-    List<AuthResponseDto> auths = jpaQuery.fetch();
-
-    return PageableExecutionUtils.getPage(auths, pageRequest, countQuery::fetchCount);
+    return roots;
   }
 
-  @Transactional
-  public AuthResponseDto createAuthAndMenu(
-      Long adminId,
-      AuthMenuCreateRequestDto authMenuCreateRequestDto
-  ) {
-    this.isDuplicateAuthName(authMenuCreateRequestDto.getAuthName());
+  public List<AuthSimpleResponseDto> getAuthKeys(Long roleId){
+    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+    QRoleAuthEntity roleAuthEntity = QRoleAuthEntity.roleAuthEntity;
+    QAuthEntity authEntity = QAuthEntity.authEntity;
 
-    AuthEntity authEntity = new AuthEntity().builder()
-        .authName(authMenuCreateRequestDto.getAuthName())
-        .authType(AuthType.MENU)
-        .regUser(adminId)
-        .build();
+    JPAQuery<AuthSimpleResponseDto> jpaQuery = queryFactory.select(Projections.fields(AuthSimpleResponseDto.class,
+                    authEntity.authId.as("key")
+        )).from(roleAuthEntity)
+        .leftJoin(authEntity)
+        .on(roleAuthEntity.authId.eq(authEntity.authId))
+        .where(roleAuthEntity.roleId.eq(roleId));
 
-    authRepository.save(authEntity);
+    List<AuthSimpleResponseDto> allFunctions = jpaQuery.fetch();
 
-    AuthResponseDto authResponseDto = authEntity.toDto();
-
-    for(Long key : authMenuCreateRequestDto.getMenuKeys()){
-      AuthMenuEntity menu = new AuthMenuEntity().builder()
-          .authId(authResponseDto.getAuthId())
-          .menuId(key)
-          .build();
-      authMenuRepository.save(menu);
-    }
-
-    return authResponseDto;
+    return allFunctions;
   }
 
-  @Transactional
-  public AuthResponseDto createAuthAndFunc(
-      Long adminId,
-      AuthFuncCreateRequestDto authFuncCreateRequestDto
-  ) {
-    this.isDuplicateAuthName(authFuncCreateRequestDto.getAuthName());
+  public List<AuthResponseDto> getAuthFuncs(Long roleId) {
+    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+    QRoleAuthEntity roleAuthEntity = QRoleAuthEntity.roleAuthEntity;
+    QAuthEntity authEntity = QAuthEntity.authEntity;
 
-    AuthEntity authEntity = new AuthEntity().builder()
-        .authName(authFuncCreateRequestDto.getAuthName())
-        .authType(AuthType.FUNC)
-        .regUser(adminId)
-        .build();
+    JPAQuery<AuthResponseDto> jpaQuery = queryFactory.select(Projections.fields(AuthResponseDto.class,
+                    authEntity.authId.as("key"),
+                    authEntity.authParent,
+                    authEntity.authName.as("label"),
+                    authEntity.authIcon.as("icon")
+        )).from(roleAuthEntity)
+        .leftJoin(authEntity)
+        .on(roleAuthEntity.authId.eq(authEntity.authId))
+        .where(roleAuthEntity.roleId.eq(roleId));
 
-    authRepository.save(authEntity);
+    List<AuthResponseDto> allFuncs = jpaQuery.fetch();
 
-    List<FunctionEntity> functions = functionRepository.findAll();
-    Map<Long, String> funcMap = new HashMap<>();
+    Map<Long, AuthResponseDto> funcMap = new HashMap<>();
+    List<AuthResponseDto> roots = new ArrayList<>();
 
-    for (FunctionEntity func : functions){
-      funcMap.put(func.getFuncId(), func.getFuncName());
+    for (AuthResponseDto auth : allFuncs){
+      auth.setChildren(new ArrayList<>());
+      funcMap.put(auth.getKey(), auth);
     }
 
-    AuthResponseDto authResponseDto = authEntity.toDto();
-
-    for(Long key : authFuncCreateRequestDto.getFuncKeys()){
-      AuthFuncEntity menu = new AuthFuncEntity().builder()
-          .authId(authResponseDto.getAuthId())
-          .funcId(key)
-          .funcName(funcMap.get(key))
-          .build();
-      authFuncRepository.save(menu);
+    for (AuthResponseDto func : allFuncs){
+      Long parentId = func.getFuncParent();
+      if (parentId != -1){
+        AuthResponseDto parentMenu = funcMap.get(parentId);
+        if (parentMenu != null){
+          parentMenu.getChildren().add(func);
+        }
+      } else {
+        roots.add(func);
+      }
     }
 
-    return authResponseDto;
-  }
-
-  @Transactional
-  public AuthResponseDto updateAuthAndMenu(
-      Long adminId,
-      AuthMenuUpdateRequest authMenuUpdateRequest
-  ) {
-
-    AuthEntity authEntity = Optional.ofNullable(authRepository.findById(authMenuUpdateRequest.getAuthId()))
-        .orElseThrow(() -> new APIException(DATA_NOT_EXIST)).get();
-
-    authMenuRepository.deleteByAuthId(authMenuUpdateRequest.getAuthId());
-
-    for(Long key : authMenuUpdateRequest.getMenuKeys()){
-      AuthMenuEntity menu = new AuthMenuEntity().builder()
-          .authId(authEntity.getAuthId())
-          .menuId(key)
-          .build();
-      authMenuRepository.save(menu);
-    }
-
-    AuthResponseDto authResponseDto = authEntity.toDto();
-
-    return authResponseDto;
-  }
-
-  @Transactional
-  public AuthResponseDto updateAuthAndFunc(
-      Long adminId,
-      AuthFuncUpdateRequest authFuncUpdateRequest
-  ) {
-
-    AuthEntity authEntity = Optional.ofNullable(authRepository.findById(authFuncUpdateRequest.getAuthId()))
-        .orElseThrow(() -> new APIException(DATA_NOT_EXIST)).get();
-
-    authFuncRepository.deleteByAuthId(authFuncUpdateRequest.getAuthId());
-
-    List<FunctionEntity> functions = functionRepository.findAll();
-    Map<Long, String> funcMap = new HashMap<>();
-
-    for (FunctionEntity func : functions){
-      funcMap.put(func.getFuncId(), func.getFuncName());
-    }
-
-    for(Long key : authFuncUpdateRequest.getFuncKeys()){
-      AuthFuncEntity menu = new AuthFuncEntity().builder()
-          .authId(authEntity.getAuthId())
-          .funcId(key)
-          .funcName(funcMap.get(key))
-          .build();
-      authFuncRepository.save(menu);
-    }
-
-    AuthResponseDto authResponseDto = authEntity.toDto();
-
-    return authResponseDto;
-  }
-
-  private void isDuplicateAuthName(String authName){
-    AuthEntity authEntity = authRepository.findByAuthName(authName);
-
-    if(authEntity != null){
-      throw new APIException(DUPLICATED_DATA);
-    }
+    return roots;
   }
 }

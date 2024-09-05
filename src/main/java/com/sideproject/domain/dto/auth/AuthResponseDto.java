@@ -1,16 +1,16 @@
 package com.sideproject.domain.dto.auth;
 
-import com.sideproject.domain.dto.admin.AdminResponseDto;
-import com.sideproject.domain.dto.admin.AdminSimpleResponseDto;
-import com.sideproject.domain.enums.AuthType;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class AuthResponseDto {
 
-  private Long authId;
-  private String authName;
-  private AuthType authType;
-  private AdminSimpleResponseDto regUser;
-  private String createDate;
+  private Long key;
+  private Long funcParent;
+  private String label;
+  private String icon;
+  private List<AuthResponseDto> children;
+
 }

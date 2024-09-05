@@ -1,0 +1,29 @@
+server:
+  port: 30871
+  servlet:
+    context-path: /backoffice
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://110.93.135.204:8432/backoffice
+    username: ekklesia
+    password: ekklesia!23
+
+logging:
+  level:
+    root: info
+
+  jpa:
+    show-sql: true
+    database: postgresql
+    hibernate:
+      ddl-auto: none
+
+backoffice:
+  jwt:
+    accessHeader: backofficeAccess
+    refreshHeader: backofficeRefresh
+    accessTimeoutMin: 1000
+    refreshTimeoutMin: 2000
+    secret: Backoffice73yamRuc3poeG1mbWZya2ZtYXVzamRwcnBya3JoZGxUZGpkbmZsZ2thUnBna3Nhb2R0cGRubGRwYWhlbXNyamZyamZ0bmRsVGRqZ2xhZW1zdGxya3NlbWZkbHdsYWtzc2tzZG50ZG1mdG5kbFRkamRqc3dwUmt3bHNrc2tmbWZhbGVyaHRrZmtkZ2tmdG5zb3JrZGxUd2tzZ2RrCg

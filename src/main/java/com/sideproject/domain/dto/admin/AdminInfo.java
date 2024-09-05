@@ -13,9 +13,10 @@ import lombok.NoArgsConstructor;
 public class AdminInfo {
 
   private Long adminId;
+  private Long roleId;
   private String email;
   private String name;
   private AdminStatusCode status;
   private Long menuId;
-  private Long funcId;
+  private Long authId;
 }
