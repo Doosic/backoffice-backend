@@ -41,7 +41,7 @@ public class RoleController extends BaseController {
         .body(compressedData);
   }
 
-  @PostMapping("/bs/auth-menu")
+  @PostMapping("/bs/role-menu")
   @BeforeRequiresAuthorization("auth-menu-create")
   public APIDataResponse<RoleResponseDto> createAuthAndMenu(
       @Validated @RequestBody RoleMenuCreateRequestDto roleMenuCreateRequestDto
@@ -51,7 +51,7 @@ public class RoleController extends BaseController {
     return APIDataResponse.of(roleResponseDto);
   }
 
-  @PostMapping("/bs/auth-func")
+  @PostMapping("/bs/role-auth")
   @BeforeRequiresAuthorization("auth-func-create")
   public APIDataResponse<RoleResponseDto> createAuthAndFunc(
       @Validated @RequestBody RoleAuthCreateRequestDto authMenuCreateRequestDto
@@ -61,7 +61,7 @@ public class RoleController extends BaseController {
     return APIDataResponse.of(roleResponseDto);
   }
 
-  @PutMapping("/bs/auth-menu")
+  @PutMapping("/bs/role-menu")
   @BeforeRequiresAuthorization("auth-menu-update")
   public APIDataResponse<RoleResponseDto> updateAuthAndMenu(
       @Validated @RequestBody RoleMenuUpdateRequest roleMenuUpdateRequest
@@ -71,9 +71,9 @@ public class RoleController extends BaseController {
     return APIDataResponse.of(roleResponseDto);
   }
 
-  @PutMapping("/bs/auth-func")
+  @PutMapping("/bs/role-auth")
   @BeforeRequiresAuthorization("auth-func-update")
-  public APIDataResponse<RoleResponseDto> updateAuthAndFunc(
+  public APIDataResponse<RoleResponseDto> updateRoleAuth(
       @Validated @RequestBody RoleAuthUpdateRequest roleAuthUpdateRequest
   ) {
     RoleResponseDto roleResponseDto = roleService.updateAuthAndFunc(this.getSessionInfo().getAdminId(), roleAuthUpdateRequest);
@@ -81,7 +81,7 @@ public class RoleController extends BaseController {
     return APIDataResponse.of(roleResponseDto);
   }
 
-  @GetMapping("/bs/all-auth-menu")
+  @GetMapping("/bs/all-role-menu")
   public ResponseEntity<byte[]> getAllFuncAndMenu() {
     RoleAuthAndMenusDto funcsAndMenusDto = new RoleAuthAndMenusDto();
     funcsAndMenusDto.setMenuList(menuService.getMenus());

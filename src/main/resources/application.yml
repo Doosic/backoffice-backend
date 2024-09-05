@@ -12,7 +12,7 @@ spring:
 
 logging:
   level:
-    root: info
+    root: debug
 
   jpa:
     show-sql: true
